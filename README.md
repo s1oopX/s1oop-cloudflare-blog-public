@@ -21,10 +21,6 @@
 
 ![阅读页面截图](docs/screenshots/article.png)
 
-### 更新记录
-
-![更新记录截图](docs/screenshots/changelog.png)
-
 ## 特性
 
 - 静态优先：Astro 生成主要页面，适合低维护成本的个人博客。
@@ -102,6 +98,17 @@ SITE_URL=https://example.com
 
 私有入口、发布 API 和 GitHub 写入 token 不包含在公开副本中。需要这类能力时，请参考 [Private Entry Pattern](docs/private-entry.md)，并在自己的私有分支或私有仓库实现。
 
+## 私有入口
+
+这个博客可以配一个独立的私有维护入口，用来处理文章发布、内容检查、评论管理或运行状态确认。公开副本不会复用站点所有者的私人路径、后台界面和 GitHub 写入接口，但会保留这类能力的设计边界：
+
+- 私有入口应该独立于公开阅读页面，普通读者不需要知道它的存在。
+- 鉴权、会话、发布和写入操作应该放在服务端或边缘函数中处理。
+- 密码、GitHub 写入 token、Cloudflare token 等配置只能来自部署环境变量。
+- 真实后台 UI 和生产发布链路建议放在私有仓库、私有分支或部署侧配置中。
+
+更完整的双语说明见 [docs/private-entry.md](docs/private-entry.md)。
+
 ## 构建
 
 ```sh
@@ -156,7 +163,7 @@ Post body.
 - `.dev.vars`、`.env`、token、密码、私钥
 - Cloudflare API Token、GitHub 写入 Token
 - Cloudflare 项目内部状态或账号配置
-- 站点所有者的私人入口路由、后台 UI 或发布 API
+- 站点所有者的真实私人入口路由、后台 UI 或发布 API
 - 本地日志、`.wrangler/`、`dist/`、`node_modules/`
 - 未公开草稿或私有文章
 
