@@ -25,3 +25,5 @@ Never commit:
 ## Admin API
 
 The `/s1oop/admin` publishing API is optional. It should only be enabled in deployments where `ADMIN_PASSWORD` and GitHub write credentials are configured intentionally.
+
+The public copy is maintained separately from the private deployment source.
