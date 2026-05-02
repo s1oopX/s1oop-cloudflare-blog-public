@@ -1,6 +1,6 @@
 # s1oop Cloudflare Blog
 
-[English Documentation](docs/README.en.md) · [Private Entry Pattern](docs/private-entry.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
+[English Documentation](docs/README.en.md) · [Private Entry Pattern](docs/private-entry.md) · [Runtime Publishing](docs/runtime-publishing.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
 
 ![Astro](https://img.shields.io/badge/Astro-6-BC52EE?logo=astro&logoColor=white)
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)
@@ -28,7 +28,8 @@
 - 阅读导向：暗色档案视觉、克制的动效、独立文章页和侧边信息区。
 - 完整入口：包含首页、全部档案、专栏、搜索、更新记录和文章详情页。
 - Cloudflare 友好：Pages Functions 接管 `/api/*`，并复用 `workers/api.js`。
-- 私有入口边界：公开版只说明维护入口的架构模式，不复用站点所有者的私人路由、界面或发布链路。
+- 运行时发布说明：生产私有仓库使用 D1 存新文章和小图，GitHub 只保留源码与部署触发。
+- 私有入口边界：公开版说明维护入口和生产链路，不包含密码、密钥或后台实现细节。
 - 安全边界：默认不提交 `.dev.vars`、token、密码、日志、构建产物或部署状态。
 
 ## 技术栈
@@ -39,7 +40,8 @@
 | Styling | TailwindCSS |
 | Hosting | Cloudflare Pages |
 | Runtime API | Cloudflare Pages Functions / Workers |
-| Optional Storage | Cloudflare KV |
+| Public Demo Storage | Optional Cloudflare KV |
+| Private Runtime Storage | Cloudflare D1 |
 | Tooling | Wrangler, Node.js 22 |
 
 ## 项目结构
@@ -54,6 +56,7 @@ src/pages/                  Astro 路由页面
 workers/api.js              公开 API 示例逻辑
 wrangler.jsonc              Worker 配置示例
 docs/private-entry.md       私有入口模式说明
+docs/runtime-publishing.md  D1 运行时发布说明
 ```
 
 ## 快速开始
@@ -89,22 +92,30 @@ cp .dev.vars.example .dev.vars
 
 `.dev.vars` 已被 Git 忽略。
 
-常用变量：
+公开副本常用变量：
 
 ```text
 COMMENTS_ENABLED=false
 SITE_URL=https://example.com
 ```
 
-私有入口、发布 API 和 GitHub 写入 token 不包含在公开副本中。需要这类能力时，请参考 [Private Entry Pattern](docs/private-entry.md)，并在自己的私有分支或私有仓库实现。
+生产私有仓库额外使用：
+
+```text
+ADMIN_PASSWORD=...
+BLOG_DB      Cloudflare D1 binding
+```
+
+私有入口不使用 GitHub 写入 token。新文章和小图直接进入 D1，GitHub 只作为源码仓库和 Cloudflare Pages 部署触发。完整说明见 [Runtime Publishing](docs/runtime-publishing.md)。
 
 ## 私有入口
 
-这个博客可以配一个独立的私有维护入口，用来处理文章发布、内容检查、评论管理或运行状态确认。公开副本不会复用站点所有者的私人路径、后台界面和 GitHub 写入接口，但会保留这类能力的设计边界：
+这个博客可以配一个独立的私有维护入口，用来处理文章发布、内容检查或运行状态确认。生产站点的私有入口位于 `/s1oop`，后台发布页位于 `/s1oop/admin`；公开副本只记录设计边界，不包含生产密码、密钥或完整后台实现。
 
 - 私有入口应该独立于公开阅读页面，普通读者不需要知道它的存在。
 - 鉴权、会话、发布和写入操作应该放在服务端或边缘函数中处理。
-- 密码、GitHub 写入 token、Cloudflare token 等配置只能来自部署环境变量。
+- 密码、Cloudflare token 等配置只能来自部署环境变量。
+- 运行时文章进入 D1，避免为了写文章重新构建或把内容回写 GitHub。
 - 真实后台 UI 和生产发布链路建议放在私有仓库、私有分支或部署侧配置中。
 
 更完整的双语说明见 [docs/private-entry.md](docs/private-entry.md)。
@@ -163,7 +174,7 @@ Post body.
 - `.dev.vars`、`.env`、token、密码、私钥
 - Cloudflare API Token、GitHub 写入 Token
 - Cloudflare 项目内部状态或账号配置
-- 站点所有者的真实私人入口路由、后台 UI 或发布 API
+- 站点所有者的生产后台密码、会话状态或内部发布记录
 - 本地日志、`.wrangler/`、`dist/`、`node_modules/`
 - 未公开草稿或私有文章
 

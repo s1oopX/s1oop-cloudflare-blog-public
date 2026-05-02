@@ -18,6 +18,14 @@ This starts Astro on `127.0.0.1:4322` and a local API server on `127.0.0.1:8787`
 - `GET /api/stats`: returns the daily counter when `BLOG_KV` is bound, otherwise zeros.
 - `GET /api/posts`: points clients to the static `/posts.json` index.
 
+These routes are intentionally lightweight demo endpoints for the public copy. The production private source repository has moved runtime publishing to D1:
+
+- `POST /api/admin/check`: verifies the private entry password.
+- `POST /api/admin/posts`: stores an uploaded Markdown post and optional small images in D1.
+- `GET /api/posts`: returns runtime D1 posts for the browser overlay.
+- `GET /api/posts/:slug`: returns one runtime D1 post.
+- `GET /api/assets/*`: serves uploaded D1 image assets with long-lived cache headers.
+
 ## Optional KV Binding
 
 When comments or stats are enabled later, bind one KV namespace as:
@@ -35,3 +43,5 @@ settings:site
 ```
 
 Private publishing endpoints are intentionally not included in this public copy. See `docs/private-entry.md` for the architecture boundary.
+
+See `docs/runtime-publishing.md` for the current production publishing model.

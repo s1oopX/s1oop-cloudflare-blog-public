@@ -1,6 +1,6 @@
 # s1oop Cloudflare Blog
 
-[简体中文](../README.md) · [Private Entry Pattern](private-entry.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
+[简体中文](../README.md) · [Private Entry Pattern](private-entry.md) · [Runtime Publishing](runtime-publishing.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
 
 ![Astro](https://img.shields.io/badge/Astro-6-BC52EE?logo=astro&logoColor=white)
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)
@@ -29,7 +29,8 @@
 - Home, archive, collections, search, changelog, and article detail pages.
 - Cloudflare Pages-friendly API structure.
 - `/api/*` handled by Pages Functions and delegated to `workers/api.js`.
-- Private-entry boundary: the public copy documents the maintenance pattern without reusing the owner's route, UI, or publishing flow.
+- Runtime publishing notes: the private production repo stores new posts and small images in D1 while GitHub remains the source and deployment trigger.
+- Private-entry boundary: the public copy documents the maintenance pattern and production flow without shipping secrets or admin implementation details.
 - Clear public/private boundary for secrets, logs, build output, and deployment state.
 
 ## Tech Stack
@@ -40,7 +41,8 @@
 | Styling | TailwindCSS |
 | Hosting | Cloudflare Pages |
 | Runtime API | Cloudflare Pages Functions / Workers |
-| Optional Storage | Cloudflare KV |
+| Public Demo Storage | Optional Cloudflare KV |
+| Private Runtime Storage | Cloudflare D1 |
 | Tooling | Wrangler, Node.js 22 |
 
 ## Project Structure
@@ -55,6 +57,7 @@ src/pages/                  Astro routes
 workers/api.js              Public API example logic
 wrangler.jsonc              Worker configuration example
 docs/private-entry.md       Private entry pattern notes
+docs/runtime-publishing.md  D1 runtime publishing notes
 ```
 
 ## Quick Start
@@ -90,22 +93,30 @@ cp .dev.vars.example .dev.vars
 
 `.dev.vars` is ignored by Git.
 
-Common variables:
+Common variables for the public copy:
 
 ```text
 COMMENTS_ENABLED=false
 SITE_URL=https://example.com
 ```
 
-Private entry routes, publishing APIs, and GitHub write tokens are not included in the public copy. If you need that workflow, see [Private Entry Pattern](private-entry.md) and implement it in your own private branch or private repository.
+The private production repo additionally uses:
+
+```text
+ADMIN_PASSWORD=...
+BLOG_DB      Cloudflare D1 binding
+```
+
+The private entry does not require a GitHub write token. New posts and small images go directly into D1; GitHub remains the source repository and Cloudflare Pages deployment trigger. See [Runtime Publishing](runtime-publishing.md) for the full notes.
 
 ## Private Entry
 
-This blog can be paired with a separate private maintenance entry for publishing posts, checking content, moderating comments, or reviewing runtime status. The public copy does not reuse the site owner's private path, admin interface, or GitHub write API, but it documents the intended boundary:
+This blog can be paired with a separate private maintenance entry for publishing posts, checking content, or reviewing runtime status. The production site's private entry lives at `/s1oop`, and the admin publishing page lives at `/s1oop/admin`; the public copy records the design boundary without shipping production passwords, secrets, or the complete admin implementation.
 
 - The private entry should be isolated from public reading pages.
 - Authentication, sessions, publishing, and write operations should be handled server-side or at the edge.
-- Passwords, GitHub write tokens, and Cloudflare tokens must come from deployment environment variables.
+- Passwords and Cloudflare tokens must come from deployment environment variables.
+- Runtime posts go into D1, avoiding rebuilds or writing new content back to GitHub.
 - Real admin UI and production publishing flows should live in a private repository, private branch, or deployment-specific configuration.
 
 See [docs/private-entry.md](private-entry.md) for the complete bilingual notes.
@@ -164,7 +175,7 @@ This repository is suitable for reading the source, learning the structure, reus
 - `.dev.vars`, `.env`, tokens, passwords, private keys
 - Cloudflare API tokens and GitHub write tokens
 - Cloudflare project internals or account configuration
-- The owner's real private route, admin UI, or publishing API
+- Production admin passwords, session state, or internal publishing records
 - Local logs, `.wrangler/`, `dist/`, `node_modules/`
 - Private drafts or unpublished personal posts
 
