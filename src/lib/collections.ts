@@ -21,7 +21,7 @@ export const collections = [
     title: '学习分享',
     eyebrow: 'learning notes',
     description: '写作、阅读、工具和方法相关记录，保留可复用的学习过程与经验。',
-    posts: ['astro-cloudflare-workflow', 'private-blog-editing-checklist'],
+    posts: ['astro-cloudflare-workflow', 'writing-checklist'],
   },
 ];
 

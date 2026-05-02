@@ -4,7 +4,7 @@
 
 If you find a security issue, do not open a public issue with exploit details.
 
-Report it privately to the repository owner through GitHub or by email if a contact address is provided on the profile.
+Report it privately to the repository owner through GitHub, or by email if a contact address is provided on the profile.
 
 ## Secrets
 
@@ -16,14 +16,14 @@ This project expects secrets to be configured outside Git:
 
 Never commit:
 
-- `ADMIN_PASSWORD`
-- `GITHUB_TOKEN`
 - Cloudflare API tokens
-- SSH private keys
+- GitHub write tokens
+- Passwords or private keys
 - `.dev.vars`
+- `.env`
 
-## Admin API
+## Private Entry
 
-The `/s1oop/admin` publishing API is optional. It should only be enabled in deployments where `ADMIN_PASSWORD` and GitHub write credentials are configured intentionally.
+The public copy does not include the owner's private login route, admin UI, or GitHub publishing API.
 
-The public copy is maintained separately from the private deployment source.
+If you build a private entry for your own fork, keep the implementation private or isolate it behind your own route, authentication, and deployment-specific secrets.

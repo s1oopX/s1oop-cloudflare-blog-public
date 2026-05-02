@@ -1,6 +1,6 @@
 # s1oop Cloudflare Blog
 
-[简体中文](../README.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
+[简体中文](../README.md) · [Private Entry Pattern](private-entry.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
 
 ![Astro](https://img.shields.io/badge/Astro-6-BC52EE?logo=astro&logoColor=white)
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)
@@ -33,7 +33,7 @@
 - Home, archive, collections, search, changelog, and article detail pages.
 - Cloudflare Pages-friendly API structure.
 - `/api/*` handled by Pages Functions and delegated to `workers/api.js`.
-- Optional private `/s1oop/admin` publishing flow when GitHub write credentials are configured.
+- Private-entry boundary: the public copy documents the maintenance pattern without reusing the owner's route, UI, or publishing flow.
 - Clear public/private boundary for secrets, logs, build output, and deployment state.
 
 ## Tech Stack
@@ -56,8 +56,9 @@ public/images/              Public image assets
 scripts/                    Local development and API proxy scripts
 src/components/             UI components
 src/pages/                  Astro routes
-workers/api.js              Shared Worker API logic
+workers/api.js              Public API example logic
 wrangler.jsonc              Worker configuration example
+docs/private-entry.md       Private entry pattern notes
 ```
 
 ## Quick Start
@@ -96,16 +97,11 @@ cp .dev.vars.example .dev.vars
 Common variables:
 
 ```text
-ADMIN_PASSWORD=change-me
 COMMENTS_ENABLED=false
-GITHUB_TOKEN=
-GITHUB_OWNER=s1oopX
-GITHUB_REPO=s1oop-cloudflare-blog-public
-GITHUB_BRANCH=main
-CONTENT_DIR=content/posts
+SITE_URL=https://example.com
 ```
 
-`GITHUB_TOKEN` is only required when `/s1oop/admin` should publish Markdown files back to GitHub.
+Private entry routes, publishing APIs, and GitHub write tokens are not included in the public copy. If you need that workflow, see [Private Entry Pattern](private-entry.md) and implement it in your own private branch or private repository.
 
 ## Build
 
@@ -161,6 +157,7 @@ This repository is suitable for reading the source, learning the structure, reus
 - `.dev.vars`, `.env`, tokens, passwords, private keys
 - Cloudflare API tokens and GitHub write tokens
 - Cloudflare project internals or account configuration
+- The owner's private route, admin UI, or publishing API
 - Local logs, `.wrangler/`, `dist/`, `node_modules/`
 - Private drafts or unpublished personal posts
 

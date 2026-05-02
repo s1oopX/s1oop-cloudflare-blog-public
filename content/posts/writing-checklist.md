@@ -9,7 +9,7 @@ tags:
 draft: false
 ---
 
-![正在书写的检查清单，适合作为文章写作前后检查流程的配图](/images/posts/private-blog-editing-checklist.jpg)
+![正在书写的检查清单，适合作为文章写作前后检查流程的配图](/images/posts/writing-checklist.jpg)
 
 个人博客不需要复杂的公开仪式，但需要稳定的写作检查清单。
 

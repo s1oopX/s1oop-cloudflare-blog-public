@@ -1,6 +1,6 @@
 # s1oop Cloudflare Blog
 
-[English Documentation](docs/README.en.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
+[English Documentation](docs/README.en.md) · [Private Entry Pattern](docs/private-entry.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
 
 ![Astro](https://img.shields.io/badge/Astro-6-BC52EE?logo=astro&logoColor=white)
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)
@@ -32,7 +32,7 @@
 - 阅读导向：暗色档案视觉、克制的动效、独立文章页和侧边信息区。
 - 完整入口：包含首页、全部档案、专栏、搜索、更新记录和文章详情页。
 - Cloudflare 友好：Pages Functions 接管 `/api/*`，并复用 `workers/api.js`。
-- 可选后台：`/s1oop/admin` 可在配置 GitHub 写入凭据后发布 Markdown。
+- 私有入口边界：公开版只说明维护入口的架构模式，不复用站点所有者的私人路由、界面或发布链路。
 - 安全边界：默认不提交 `.dev.vars`、token、密码、日志、构建产物或部署状态。
 
 ## 技术栈
@@ -55,8 +55,9 @@ public/images/              公开图片资源
 scripts/                    本地开发与 API 代理脚本
 src/components/             页面组件
 src/pages/                  Astro 路由页面
-workers/api.js              可复用 Worker API 逻辑
+workers/api.js              公开 API 示例逻辑
 wrangler.jsonc              Worker 配置示例
+docs/private-entry.md       私有入口模式说明
 ```
 
 ## 快速开始
@@ -95,16 +96,11 @@ cp .dev.vars.example .dev.vars
 常用变量：
 
 ```text
-ADMIN_PASSWORD=change-me
 COMMENTS_ENABLED=false
-GITHUB_TOKEN=
-GITHUB_OWNER=s1oopX
-GITHUB_REPO=s1oop-cloudflare-blog-public
-GITHUB_BRANCH=main
-CONTENT_DIR=content/posts
+SITE_URL=https://example.com
 ```
 
-`GITHUB_TOKEN` 只在启用 `/s1oop/admin` 发布 Markdown 到 GitHub 时需要。
+私有入口、发布 API 和 GitHub 写入 token 不包含在公开副本中。需要这类能力时，请参考 [Private Entry Pattern](docs/private-entry.md)，并在自己的私有分支或私有仓库实现。
 
 ## 构建
 
@@ -160,6 +156,7 @@ Post body.
 - `.dev.vars`、`.env`、token、密码、私钥
 - Cloudflare API Token、GitHub 写入 Token
 - Cloudflare 项目内部状态或账号配置
+- 站点所有者的私人入口路由、后台 UI 或发布 API
 - 本地日志、`.wrangler/`、`dist/`、`node_modules/`
 - 未公开草稿或私有文章
 

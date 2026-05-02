@@ -1,5 +1,5 @@
 {
-  "name": "s1oop-cloudflare-blog",
+  "name": "s1oop-cloudflare-blog-public",
   "version": "0.1.0",
   "private": true,
   "description": "Sanitized public copy of an Astro blog deployed on Cloudflare Pages with optional Pages Functions.",
