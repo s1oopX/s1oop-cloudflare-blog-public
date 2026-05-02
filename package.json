@@ -1,0 +1,37 @@
+{
+  "name": "s1oop-cloudflare-blog",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sanitized public copy of an Astro blog deployed on Cloudflare Pages with optional Pages Functions.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s1oopX/s1oop-cloudflare-blog-public.git"
+  },
+  "bugs": {
+    "url": "https://github.com/s1oopX/s1oop-cloudflare-blog-public/issues"
+  },
+  "homepage": "https://s1oop.bbroot.com",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:astro": "astro dev --host 127.0.0.1 --port 4322",
+    "dev:api": "node scripts/local-api.mjs",
+    "dev:proxy": "node scripts/local-proxy.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^6.1.10"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18",
+    "wrangler": "^4.87.0"
+  }
+}
