@@ -10,6 +10,8 @@ This is the sanitized public copy of the project. The private repository remains
 
 This copy does not include local secrets, deployment credentials, Cloudflare account state, build output, logs, or local development runtime folders.
 
+Maintainer: [s1oopX](https://github.com/s1oopX)
+
 ## Features
 
 - Astro static site generation.
