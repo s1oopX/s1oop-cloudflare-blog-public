@@ -1,0 +1,36 @@
+---
+import SiteStatusPanel from './SiteStatusPanel.astro';
+
+interface Props {
+  postCount: number;
+  tagCount: number;
+  latestLabel: string;
+}
+
+const { postCount, tagCount, latestLabel } = Astro.props;
+---
+
+<aside class="ui-sidebar ui-stagger">
+  <SiteStatusPanel />
+
+  <section class="ui-panel">
+    <div class="ui-panel-header">
+      <h2 class="ui-panel-title">阅读概览</h2>
+    </div>
+    <div class="ui-panel-body grid gap-4">
+      <div class="ui-stat-row">
+        <span class="ui-stat-label">文章</span>
+        <span class="ui-stat-value" data-post-count>{postCount}</span>
+      </div>
+      <div class="ui-stat-row">
+        <span class="ui-stat-label">标签</span>
+        <span class="ui-stat-value" data-tag-count>{tagCount}</span>
+      </div>
+      <div class="ui-stat-row">
+        <span class="ui-stat-label">最新</span>
+        <span class="ui-stat-value" data-latest-post>{latestLabel}</span>
+      </div>
+    </div>
+  </section>
+
+</aside>

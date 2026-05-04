@@ -1,0 +1,88 @@
+@media (prefers-reduced-motion: reduce) {
+  .ui-stagger > *,
+  .landing-track,
+  .landing-fixed,
+  .landing-scroll-cue span,
+  .landing-portrait,
+  .landing-portrait > img,
+  .landing-title,
+  .private-dashboard[data-auth='unlocked'] .private-status-card,
+  .private-dashboard[data-auth='unlocked'] .private-dashboard-panel,
+  .reading-page .ui-page-head-copy,
+  .reading-surface {
+    animation: none;
+    transition: none;
+  }
+
+  .landing-portrait:hover::before,
+  .landing-portrait:focus-visible::before {
+    animation: none;
+  }
+
+  .ui-stagger > *,
+  .landing-fixed,
+  .private-dashboard[data-auth='unlocked'] .private-status-card,
+  .private-dashboard[data-auth='unlocked'] .private-dashboard-panel,
+  .reading-page .ui-page-head-copy,
+  .reading-surface {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-header nav {
+    @apply h-auto flex-wrap gap-2 py-2;
+    min-height: 4rem;
+  }
+
+  .site-brand {
+    @apply gap-2 px-1 pr-1;
+  }
+
+  .site-brand-avatar {
+    @apply h-9 w-9;
+  }
+
+  .site-brand-name {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: nowrap;
+    font-size: 1rem;
+    line-height: 1.25rem;
+  }
+
+  .site-nav-group {
+    @apply order-2 flex-none justify-start text-xs;
+    width: auto;
+    max-width: none;
+  }
+
+  .site-nav-link {
+    @apply flex-none px-2.5 py-1.5 text-center;
+  }
+
+  .ui-search {
+    @apply h-12 gap-2 px-3;
+  }
+
+  .ui-search-button {
+    @apply h-8 px-3;
+  }
+
+  .post-card-link {
+    @apply gap-3 p-3;
+  }
+
+  .post-card-media {
+    min-height: 11rem;
+  }
+
+  .post-card-title {
+    @apply text-xl;
+  }
+}

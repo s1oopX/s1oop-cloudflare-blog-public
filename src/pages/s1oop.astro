@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/private-access.css';
+---
+
+<BaseLayout
+  title="个人登录 | s1oop's Blog"
+  description="s1oop 的个人登录入口"
+  hideChrome={true}
+  mainClass="private-admin-root"
+>
+  <section class="private-admin-stage" aria-label="s1oop private access">
+    <a class="private-admin-return" href="/blog">返回博客</a>
+    <div class="private-admin-panel private-access-panel">
+      <section class="private-admin-view" aria-label="个人页面解锁">
+        <div class="private-lock-mark" aria-hidden="true">01</div>
+        <p class="private-admin-kicker">private desk</p>
+        <h1 class="private-admin-title">个人管理</h1>
+        <p class="private-admin-copy">D1 发布、小图入库与会话锁定。</p>
+        <form id="private-login" class="private-admin-form" novalidate>
+          <label class="sr-only" for="private-password">访问密码</label>
+          <input
+            id="private-password"
+            class="private-admin-input"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="输入密码"
+            required
+          />
+          <button class="private-admin-button" type="submit">开启</button>
+        </form>
+        <div class="private-access-meta" aria-label="入口状态">
+          <span>browser session</span>
+          <span>markdown publish</span>
+          <span>private route</span>
+        </div>
+        <p id="private-login-state" class="private-admin-state" aria-live="polite" aria-atomic="true">等待访问密码</p>
+      </section>
+    </div>
+  </section>
+
+  <script type="module" src="/scripts/private-login.js"></script>
+</BaseLayout>

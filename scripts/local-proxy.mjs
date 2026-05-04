@@ -23,7 +23,7 @@ const parseDevVars = async () => {
 
 const devVars = await parseDevVars();
 const env = {
-  COMMENTS_ENABLED: devVars.COMMENTS_ENABLED ?? process.env.COMMENTS_ENABLED ?? 'false',
+  ADMIN_PASSWORD: devVars.ADMIN_PASSWORD ?? process.env.ADMIN_PASSWORD ?? '',
 };
 
 const toHeaders = (source) => {

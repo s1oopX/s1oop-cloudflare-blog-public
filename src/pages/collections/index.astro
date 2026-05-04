@@ -1,11 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import { collectionHref, collections, postsForCollection } from '../../lib/collections';
-import { postHref, postImage, visiblePosts } from '../../lib/posts';
+import { collectionHref, collections } from '../../lib/collections';
 
-const posts = visiblePosts(await getCollection('posts'));
+const collectionMeta = collections.map((collection) => ({
+  slug: collection.slug,
+  runtimeTags: collection.runtimeTags,
+}));
 ---
 
 <BaseLayout title="专栏 | s1oop's Blog">
@@ -16,14 +17,17 @@ const posts = visiblePosts(await getCollection('posts'));
       description="按阅读意图整理的内容路线。你可以从一个主题开始，连续读下去。"
     />
 
-    <div class="collection-grid ui-page-body ui-stagger">
+    <div
+      class="collection-grid ui-page-body ui-stagger"
+      data-collection-grid
+      data-collection-meta={JSON.stringify(collectionMeta)}
+    >
       {collections.map((collection) => {
-        const collectionPosts = postsForCollection(collection, posts);
-        const leadPost = collectionPosts[0];
-        const image = leadPost ? postImage(leadPost) : null;
+        const image = collection.image;
+        const titleId = `collection-${collection.slug}-title`;
 
         return (
-          <a href={collectionHref(collection)} class="collection-card ui-panel ui-panel-link no-underline">
+          <a href={collectionHref(collection)} class="collection-card ui-panel ui-panel-link no-underline" data-collection-card={collection.slug} aria-labelledby={titleId}>
             {image && (
               <div class="collection-card-image">
                 <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
@@ -32,19 +36,17 @@ const posts = visiblePosts(await getCollection('posts'));
             <div class="collection-card-body">
               <p class="ui-eyebrow">{collection.eyebrow}</p>
               <div class="mt-3 flex flex-wrap gap-2">
-                <span class="ui-badge">{collectionPosts.length} 篇</span>
+                <span class="ui-badge" data-collection-count>0 篇</span>
               </div>
-              <h2>{collection.title}</h2>
+              <h2 id={titleId}>{collection.title}</h2>
               <p>{collection.description}</p>
-              <div class="collection-card-list">
-                {collectionPosts.slice(0, 2).map((post) => (
-                  <span>{post.data.title}</span>
-                ))}
-              </div>
+              <div class="collection-card-list" data-collection-list></div>
             </div>
           </a>
         );
       })}
     </div>
   </section>
+
+  <script type="module" src="/scripts/collections-index.js"></script>
 </BaseLayout>

@@ -1,13 +1,46 @@
-<section class="ui-panel mt-12 border-dashed">
+---
+interface Props {
+  slug?: string;
+}
+
+const { slug = '' } = Astro.props;
+---
+
+<section class="ui-panel mt-12 comments-panel" data-comments-panel data-comments-slug={slug} hidden>
   <div class="ui-panel-header">
     <h2 class="text-lg font-semibold text-white">留言</h2>
+    <span class="comments-count" data-comments-count>0</span>
   </div>
   <div class="ui-panel-body">
-  <p class="text-sm text-zinc-400">
-    当前仅保留安静阅读。需要交流时，会再开放更合适的联系入口。
-  </p>
-  <div class="mt-4 rounded-md border border-white/10 bg-white/[0.035] px-4 py-3 text-sm text-zinc-300">
-    安静阅读
-  </div>
+    <div class="comments-list" data-comments-list>
+      <p class="comments-empty">正在读取留言。</p>
+    </div>
+
+    <form class="comments-form" data-comments-form>
+      <div class="comments-form-grid">
+        <label>
+          <span>称呼</span>
+          <input name="authorName" type="text" maxlength="32" autocomplete="name" required />
+        </label>
+        <label>
+          <span>链接</span>
+          <input name="authorUrl" type="url" maxlength="160" autocomplete="url" placeholder="可选" />
+        </label>
+      </div>
+      <label class="comments-body-field">
+        <span>内容</span>
+        <textarea name="body" minlength="5" maxlength="30" rows="3" required></textarea>
+      </label>
+      <label class="comments-honeypot" aria-hidden="true">
+        <span>Website</span>
+        <input name="website" type="text" tabindex="-1" autocomplete="off" />
+      </label>
+      <div class="comments-actions">
+        <span data-comments-state>正在读取评论状态</span>
+        <button type="submit">提交留言</button>
+      </div>
+    </form>
   </div>
 </section>
+
+<script type="module" src="/scripts/comments.js"></script>

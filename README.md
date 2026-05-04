@@ -1,80 +1,75 @@
-# s1oop Cloudflare Blog
+# s1oop Cloudflare Blog Public
 
-[English Documentation](docs/README.en.md) · [Private Entry Pattern](docs/private-entry.md) · [Runtime Publishing](docs/runtime-publishing.md) · [Live Site](https://s1oop.bbroot.com) · [Changelog](https://s1oop.bbroot.com/changelog)
+Sanitized public source for the s1oop Cloudflare blog. The repository keeps two major architecture lines instead of overwriting the old public copy.
 
-![Astro](https://img.shields.io/badge/Astro-6-BC52EE?logo=astro&logoColor=white)
-![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflare&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-111827)
-![Public Copy](https://img.shields.io/badge/Repository-Sanitized%20Public%20Copy-16a34a)
+Live site: <https://s1oop.bbroot.com>
 
-`s1oop Cloudflare Blog` 是一个面向长期阅读和个人归档的暗色博客项目。它使用 Astro 构建静态页面，通过 Cloudflare Pages 部署，并用 Pages Functions / Worker 复用同一套 API 逻辑。
+## Versions
 
-> 当前仓库是脱敏后的公开源码副本。真实线上站点仍由私有主仓库部署，本仓库不包含生产密钥、Cloudflare 账号状态、本地日志、构建产物或私有草稿。
+| Version | Branch | Tag | Model | Use case |
+| --- | --- | --- | --- | --- |
+| v1 Static Public Copy | `v1-static` | `v1.0.0` | Astro Content Collections with Markdown files in Git | Study the original static blog demo and UI structure |
+| v2 Runtime Architecture | `main` / `v2-runtime` | `v2.0.0` | Cloudflare D1 runtime posts with admin publishing APIs | Study the current runtime publishing architecture |
 
-## 预览
+The `v1-static` branch preserves the original public demo with `content/posts` and static article routes. The `v2-runtime` branch opens the current private repository architecture after removing production content, secrets, local state, and deployment data.
 
-### 文章列表
+## Architecture
 
-![文章列表截图](docs/screenshots/blog.png)
+- Astro builds static page shells in `dist/`.
+- Cloudflare Pages serves the frontend.
+- Pages Functions route `/api/*` to `workers/api.js`.
+- D1 is the only public article source in v2.
+- The single article reader is `/blog/live?slug=...`.
+- Archive, collection, search, home entry, and recommendations read `/api/posts` in the browser.
+- Git stores code, design, scripts, and docs. Public posts are not written back to the repository.
 
-### 阅读页面
+## What Is Open Sourced In v2
 
-![阅读页面截图](docs/screenshots/article.png)
+- Runtime post APIs for D1-backed archive, detail, search, collections, and recommendations.
+- Private admin publishing flow structure for Markdown upload and replacement.
+- D1 image asset storage for small uploaded images.
+- Comment storage and runtime comment switch.
+- Cloudflare Pages Functions / Workers shared entrypoint.
+- D1 migrations for posts, image assets, settings, search text, and comments.
+- Frontend pages, components, scripts, and styles for the runtime model.
 
-## 特性
+## What Is Not Included
 
-- 静态优先：Astro 生成主要页面，适合低维护成本的个人博客。
-- 内容清晰：文章通过 Astro Content Collections 管理，结构稳定。
-- 阅读导向：暗色档案视觉、克制的动效、独立文章页和侧边信息区。
-- 完整入口：包含首页、全部档案、专栏、搜索、更新记录和文章详情页。
-- Cloudflare 友好：Pages Functions 接管 `/api/*`，并复用 `workers/api.js`。
-- 运行时发布说明：生产私有仓库使用 D1 存新文章和小图，GitHub 只保留源码与部署触发。
-- 私有入口边界：公开版说明维护入口和生产链路，不包含密码、密钥或后台实现细节。
-- 安全边界：默认不提交 `.dev.vars`、token、密码、日志、构建产物或部署状态。
+- Production D1 data.
+- Real article Markdown or uploaded article images.
+- `.dev.vars`, `.env`, passwords, tokens, sessions, logs, or local Wrangler state.
+- Cloudflare account state or real production binding IDs.
+- Private drafts or unpublished content.
 
-## 技术栈
+## Tech Stack
 
-| 层级 | 选型 |
-| --- | --- |
-| Framework | Astro 6 |
-| Styling | TailwindCSS |
-| Hosting | Cloudflare Pages |
-| Runtime API | Cloudflare Pages Functions / Workers |
-| Public Demo Storage | Optional Cloudflare KV |
-| Private Runtime Storage | Cloudflare D1 |
-| Tooling | Wrangler, Node.js 22 |
+- Astro 6
+- TailwindCSS
+- Cloudflare Pages
+- Cloudflare Pages Functions
+- Cloudflare D1
+- Wrangler for Worker config validation
 
-## 项目结构
-
-```text
-content/posts/              Markdown 文章内容
-functions/api/[[path]].js   Cloudflare Pages Functions 入口
-public/images/              公开图片资源
-scripts/                    本地开发与 API 代理脚本
-src/components/             页面组件
-src/pages/                  Astro 路由页面
-workers/api.js              公开 API 示例逻辑
-wrangler.jsonc              Worker 配置示例
-docs/private-entry.md       私有入口模式说明
-docs/runtime-publishing.md  D1 运行时发布说明
-```
-
-## 快速开始
+## Local Development
 
 ```sh
 npm install
 npm run dev
 ```
 
-打开：
+Open:
 
 ```text
 http://127.0.0.1:4322
 ```
 
-`npm run dev` 会同时启动 Astro dev server 和本地 API server，并把 `/api/*` 代理到本地 API。
+`npm run dev` starts:
 
-也可以拆分运行：
+- Astro dev server on `127.0.0.1:4322`
+- Local API server on `127.0.0.1:8787`
+- A proxy so Astro can call `/api/*`
+
+Split commands are also available:
 
 ```sh
 npm run dev:astro
@@ -82,110 +77,121 @@ npm run dev:api
 npm run dev:proxy
 ```
 
-## 环境变量
+The local Node API shim does not emulate D1. Without a real `BLOG_DB` binding, publishing, post listing, D1 images, delete operations, and comment settings must be tested through Cloudflare Pages Functions or a Wrangler environment.
 
-复制示例文件：
+## Environment
+
+Copy local placeholders:
 
 ```sh
 cp .dev.vars.example .dev.vars
 ```
 
-`.dev.vars` 已被 Git 忽略。
+`.dev.vars` is ignored by Git.
 
-公开副本常用变量：
-
-```text
-COMMENTS_ENABLED=false
-SITE_URL=https://example.com
-```
-
-生产私有仓库额外使用：
+Required for private admin login:
 
 ```text
 ADMIN_PASSWORD=...
-BLOG_DB      Cloudflare D1 binding
 ```
 
-私有入口不使用 GitHub 写入 token。新文章和小图直接进入 D1，GitHub 只作为源码仓库和 Cloudflare Pages 部署触发。完整说明见 [Runtime Publishing](docs/runtime-publishing.md)。
+Required Cloudflare binding:
 
-## 私有入口
+```text
+BLOG_DB      D1 database for posts, comments, settings, and uploaded small images
+```
 
-这个博客可以配一个独立的私有维护入口，用来处理文章发布、内容检查或运行状态确认。生产站点的私有入口位于 `/s1oop`，后台发布页位于 `/s1oop/admin`；公开副本只记录设计边界，不包含生产密码、密钥或完整后台实现。
+Optional:
 
-- 私有入口应该独立于公开阅读页面，普通读者不需要知道它的存在。
-- 鉴权、会话、发布和写入操作应该放在服务端或边缘函数中处理。
-- 密码、Cloudflare token 等配置只能来自部署环境变量。
-- 运行时文章进入 D1，避免为了写文章重新构建或把内容回写 GitHub。
-- 真实后台 UI 和生产发布链路建议放在私有仓库、私有分支或部署侧配置中。
+```text
+SITE_URL=https://example.com
+```
 
-更完整的双语说明见 [docs/private-entry.md](docs/private-entry.md)。
+`wrangler.jsonc` uses a placeholder D1 `database_id`. Replace it with your own Cloudflare D1 database ID before direct Worker deployment.
 
-## 构建
+## Build
 
 ```sh
 npm run build
 npm run preview
 ```
 
-静态输出目录为 `dist/`。
+The static output is written to `dist/`.
 
-## Cloudflare Pages
+Expected public route shape:
 
-线上站点从私有主仓库部署，不从这个公开副本部署。
+- `/`
+- `/blog`
+- `/blog/live?slug=...`
+- `/collections`
+- `/collections/:slug`
+- `/search`
+- `/about`
+- `/changelog`
+- `/s1oop`
+- `/s1oop/admin`
 
-推荐配置：
+There are no generated static article routes such as `/blog/my-post`, and no static post indexes such as `/posts.json` or `/search-index.json` in v2.
+
+## Runtime Publishing
+
+Create the D1 database:
+
+```sh
+npx wrangler d1 create s1oop-blog-content
+```
+
+Apply the schema:
+
+```sh
+npx wrangler d1 execute s1oop-blog-content --file migrations/0001_runtime_posts.sql
+npx wrangler d1 execute s1oop-blog-content --file migrations/0002_blog_assets.sql
+npx wrangler d1 execute s1oop-blog-content --file migrations/0003_site_settings.sql
+npx wrangler d1 execute s1oop-blog-content --file migrations/0004_runtime_post_search_text.sql
+npx wrangler d1 execute s1oop-blog-content --file migrations/0005_blog_comments.sql
+```
+
+Bind it to the Pages project:
 
 ```text
-Build command: npm run build
-Build output directory: dist
-Production branch: main
-Node.js version: 22
+BLOG_DB -> s1oop-blog-content
 ```
 
-API 路由：
+`POST /api/admin/posts` accepts a Markdown file plus optional image files. The Markdown is parsed into HTML and stored in `blog_posts`; uploaded images are stored in `blog_assets` and referenced through `/api/assets/*`.
 
-```text
-functions/api/[[path]].js -> workers/api.js
-```
+## Public API
 
-## 内容写作
+- `GET /api/posts`: returns D1 posts for archive, collections, search, home entry, and recommendations.
+- `GET /api/posts/:slug`: returns one published D1 post for `/blog/live?slug=...`.
+- `GET /api/assets/*`: serves uploaded D1 image assets.
+- `GET /api/comments`: returns public comments when enabled.
+- `POST /api/comments`: stores a public comment when comments are enabled.
 
-文章位于 `content/posts/`，基础格式如下：
+## Admin API
 
-```md
----
-title: My Post
-date: 2026-04-29
-excerpt: Short summary.
-tags:
-  - Blog
-draft: false
----
+- `POST /api/admin/check`: verifies the private `/s1oop` password.
+- `GET /api/admin/posts`: lists D1 posts.
+- `POST /api/admin/posts`: uploads or replaces a D1 post.
+- `GET /api/admin/posts/:slug`: checks or fetches one D1 post.
+- `DELETE /api/admin/posts/:slug`: deletes one D1 post and its assets.
+- `GET /api/admin/assets/orphans`: counts orphaned D1 image assets.
+- `DELETE /api/admin/assets/orphans`: deletes orphaned D1 image assets.
+- `GET /api/admin/comments`: lists comments for moderation.
+- `DELETE /api/admin/comments/:id`: deletes one comment.
+- `GET /api/admin/settings`: reads runtime settings.
+- `PATCH /api/admin/settings`: updates runtime settings.
 
-Post body.
-```
+## Notes
 
-图片可以放在 `public/images/posts/`，并在 Markdown 中使用公开路径引用。
-
-## 公开副本边界
-
-本仓库适合阅读源码、学习结构、复用样式和提交非敏感改进。以下内容不会放入公开副本：
-
-- `.dev.vars`、`.env`、token、密码、私钥
-- Cloudflare API Token、GitHub 写入 Token
-- Cloudflare 项目内部状态或账号配置
-- 站点所有者的生产后台密码、会话状态或内部发布记录
-- 本地日志、`.wrangler/`、`dist/`、`node_modules/`
-- 未公开草稿或私有文章
-
-## 维护者
-
-[s1oopX](https://github.com/s1oopX)
-
-初始公开副本由 [Codex](https://github.com/codex) 协助整理。
+- Keep article content in D1, not under `content/posts`.
+- Use `v1-static` if you want the older static Markdown demo.
+- Use the admin page for new runtime posts.
+- The admin publishing API requires `ADMIN_PASSWORD` and `BLOG_DB` and should only be enabled for trusted deployments.
+- Public comments are disabled by default.
+- Use Cloudflare Web Analytics for production analytics.
 
 ## License
 
-Code is released under the [MIT License](LICENSE).
+Code is released under the MIT License.
 
 Article content and images remain copyright of their respective author unless a post or asset states otherwise.

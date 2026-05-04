@@ -1,2 +1,7 @@
-COMMENTS_ENABLED=false
-SITE_URL=https://example.com
+ADMIN_PASSWORD=change-me
+
+# Runtime publishing uses Cloudflare bindings, not local secrets:
+# - BLOG_DB D1 database binding for posts and small images
+#
+# The local Node API shim does not emulate D1. Use Cloudflare Pages
+# Functions or Wrangler when testing real uploads.

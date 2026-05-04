@@ -1,66 +1,52 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArchiveSidebar from '../../components/ArchiveSidebar.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Pagination from '../../components/Pagination.astro';
-import PostCard from '../../components/PostCard.astro';
-import SiteStatusPanel from '../../components/SiteStatusPanel.astro';
-import { POSTS_PER_PAGE, collectTags, formatPostDate, pageCount, pageItems, postExcerpt, postHref, postImage, visiblePosts } from '../../lib/posts';
+import { collectionHref, collections } from '../../lib/collections';
+import { POSTS_PER_PAGE } from '../../lib/posts';
 
-const posts = visiblePosts(await getCollection('posts'));
-const tags = collectTags(posts);
-const latestPost = posts[0];
 const currentPage = 1;
-const totalPages = pageCount(posts, POSTS_PER_PAGE);
-const paginatedPosts = pageItems(posts, currentPage, POSTS_PER_PAGE);
+const totalPages = 1;
+const archivePaths = collections.map((collection) => ({
+  slug: collection.slug,
+  href: collectionHref(collection),
+  title: collection.title,
+  count: 0,
+  runtimeTags: collection.runtimeTags,
+}));
+const initialPostData: unknown[] = [];
 ---
 
-<BaseLayout title="全部档案 | s1oop's Blog">
+<BaseLayout title="全部内容 | s1oop's Blog">
   <section class="ui-page archive-page">
     <PageHeader
       eyebrow="full archive"
-      title="全部档案"
+      title="全部内容"
       description="所有已经整理好的文章都保留在这里。这里是默认入口，适合慢慢回看。"
     />
 
     <div class="ui-grid ui-page-body">
-      <div class="ui-stack ui-stagger">
-        {paginatedPosts.map((post) => (
-          <PostCard
-            title={post.data.title}
-            excerpt={postExcerpt(post)}
-            href={postHref(post)}
-            date={formatPostDate(post.data.date)}
-            tags={post.data.tags}
-            image={postImage(post)}
-          />
-        ))}
-        <Pagination currentPage={currentPage} totalPages={totalPages} baseHref="/blog/page" firstHref="/blog" />
+      <div
+        class="ui-stack ui-stagger archive-post-list"
+        data-post-list
+        data-page-size={POSTS_PER_PAGE}
+        data-initial-posts={JSON.stringify(initialPostData)}
+        data-archive-paths={JSON.stringify(archivePaths)}
+      >
+        <div class="ui-panel p-5 text-sm text-zinc-400" data-archive-empty>正在读取 D1 文章。</div>
+        <div data-post-pagination>
+          <Pagination currentPage={currentPage} totalPages={totalPages} baseHref="/blog" queryParam="page" />
+        </div>
       </div>
 
-      <aside class="ui-sidebar ui-stagger">
-        <SiteStatusPanel />
-
-        <section class="ui-panel">
-          <div class="ui-panel-header">
-            <h2 class="text-sm font-medium text-white">阅读概览</h2>
-          </div>
-          <div class="ui-panel-body grid gap-4">
-            <div class="ui-stat-row">
-              <span class="ui-stat-label">文章</span>
-              <span class="ui-stat-value">{posts.length}</span>
-            </div>
-            <div class="ui-stat-row">
-              <span class="ui-stat-label">标签</span>
-              <span class="ui-stat-value">{tags.length}</span>
-            </div>
-            <div class="ui-stat-row">
-              <span class="ui-stat-label">最新</span>
-              <span class="ui-stat-value">{latestPost ? formatPostDate(latestPost.data.date) : '-'}</span>
-            </div>
-          </div>
-        </section>
-      </aside>
+      <ArchiveSidebar
+        postCount={0}
+        tagCount={0}
+        latestLabel="-"
+      />
     </div>
   </section>
+
+  <script type="module" src="/scripts/blog-index.js"></script>
 </BaseLayout>
