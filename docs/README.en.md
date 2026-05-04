@@ -14,6 +14,8 @@ The repository keeps two major lines: `v1` is the original static public copy, a
 
 Live site: <https://s1oop.bbroot.com>
 
+Engineering notes: [docs/engineering.md](engineering.md).
+
 ## Version Selection
 
 | Version | Branch / Tag | Content model | Best for |
@@ -39,6 +41,7 @@ v2 is designed to keep the personal blog stack small and clear:
 - Cloudflare D1: posts, uploaded small images, comments, and runtime settings.
 - No standalone Node service, traditional database server, or required object storage is needed. R2 can be added later, but it is not required by the current architecture.
 - New posts are not written back to GitHub. GitHub stores code and deployment history only.
+- Worker and browser modules stay as lightweight JavaScript / ESM. TypeScript is used where Astro-side helper modules benefit from stronger type boundaries, not to chase language statistics.
 
 ## Architecture
 
