@@ -8,7 +8,9 @@
 [![Release](https://img.shields.io/github/v/release/s1oopX/s1oop-cloudflare-blog-public?display_name=tag)](https://github.com/s1oopX/s1oop-cloudflare-blog-public/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-111827.svg)](../LICENSE)
 
-Sanitized public source for the s1oop Cloudflare blog. The repository keeps two major lines: `v1` is the original static public copy, and `v2` is the current Cloudflare D1 runtime architecture.
+Sanitized public source for the s1oop Cloudflare blog. The project uses a **GitHub-driven source and deployment flow with Cloudflare as the runtime platform**: GitHub handles version control and Pages build triggers, while Cloudflare Pages / Functions / D1 handle hosting, APIs, and content storage.
+
+The repository keeps two major lines: `v1` is the original static public copy, and `v2` is the current Cloudflare D1 runtime architecture.
 
 Live site: <https://s1oop.bbroot.com>
 
@@ -27,14 +29,33 @@ This repository opens the architecture and implementation without exposing produ
 
 In v2, Git stores page shells, styles, scripts, Worker APIs, D1 migrations, and documentation. Article Markdown, uploaded images, comments, and runtime settings live in D1.
 
+## Cloudflare + GitHub Driven
+
+v2 is designed to keep the personal blog stack small and clear:
+
+- GitHub: source repository, version branches, releases, and Cloudflare Pages build triggers.
+- Cloudflare Pages: static page shell hosting.
+- Cloudflare Pages Functions / Workers: unified `/api/*` runtime.
+- Cloudflare D1: posts, uploaded small images, comments, and runtime settings.
+- No standalone Node service, traditional database server, or required object storage is needed. R2 can be added later, but it is not required by the current architecture.
+- New posts are not written back to GitHub. GitHub stores code and deployment history only.
+
 ## Architecture
 
 ```text
-Astro page shells
-    -> Cloudflare Pages
-    -> Pages Functions / workers/api.js
-    -> Cloudflare D1
-       blog_posts / blog_assets / blog_comments / site_settings
+GitHub
+  source + branches + releases
+        |
+        v
+Cloudflare Pages
+  Astro page shells
+        |
+        v
+Pages Functions / workers/api.js
+        |
+        v
+Cloudflare D1
+  blog_posts / blog_assets / blog_comments / site_settings
 ```
 
 Core routes:

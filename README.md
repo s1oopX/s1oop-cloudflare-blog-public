@@ -8,7 +8,9 @@
 [![Release](https://img.shields.io/github/v/release/s1oopX/s1oop-cloudflare-blog-public?display_name=tag)](https://github.com/s1oopX/s1oop-cloudflare-blog-public/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-111827.svg)](LICENSE)
 
-s1oop Cloudflare 博客的脱敏公开源码。仓库保留两个大版本：`v1` 是原始静态公开版，`v2` 是当前 Cloudflare D1 运行时架构。
+s1oop Cloudflare 博客的脱敏公开源码。项目采用 **GitHub 驱动源码与部署、Cloudflare 承担运行时能力** 的单平台架构：GitHub 负责版本管理和 Pages 构建触发，Cloudflare Pages / Functions / D1 负责页面托管、API 和内容存储。
+
+仓库保留两个大版本：`v1` 是原始静态公开版，`v2` 是当前 Cloudflare D1 运行时架构。
 
 线上站点：<https://s1oop.bbroot.com>
 
@@ -27,14 +29,33 @@ s1oop Cloudflare 博客的脱敏公开源码。仓库保留两个大版本：`v1
 
 v2 中，Git 保存页面壳、样式、脚本、Worker API、D1 migrations 和文档；文章 Markdown、上传图片、评论和运行时设置存储在 D1。
 
+## Cloudflare + GitHub 驱动
+
+v2 的设计目标是减少外部依赖，让个人博客的源码、部署和运行时内容形成一条清晰链路：
+
+- GitHub：源码仓库、版本分支、Release、Cloudflare Pages 构建触发。
+- Cloudflare Pages：静态页面壳托管。
+- Cloudflare Pages Functions / Workers：统一处理 `/api/*`。
+- Cloudflare D1：文章、上传小图、评论和运行时设置。
+- 不需要独立 Node 服务、传统数据库服务器或额外对象存储；R2 可后续扩展，但不是当前架构的必要条件。
+- 新文章不会写回 GitHub，GitHub 只保存代码和部署历史。
+
 ## 架构概览
 
 ```text
-Astro page shells
-    -> Cloudflare Pages
-    -> Pages Functions / workers/api.js
-    -> Cloudflare D1
-       blog_posts / blog_assets / blog_comments / site_settings
+GitHub
+  source + branches + releases
+        |
+        v
+Cloudflare Pages
+  Astro page shells
+        |
+        v
+Pages Functions / workers/api.js
+        |
+        v
+Cloudflare D1
+  blog_posts / blog_assets / blog_comments / site_settings
 ```
 
 核心路径：
